@@ -891,4 +891,65 @@ def main():
             open_ai_chat()  
 
 if __name__ == '__main__':
+    import streamlit as st
+    from streamlit.components.v1 import html
+
+    # Streamlit 앱 제목
+    st.title("Kakao Maps in Streamlit")
+
+    # Kakao Maps JavaScript를 포함한 HTML 코드
+    kakao_map_html = """
+    <div id="map" style="width:100%;height:400px;"></div>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28e4d4739fe65a650ce5cb32cf39e00e"></script>
+    <script>
+        // 지도를 생성할 컨테이너와 옵션
+        var mapContainer = document.getElementById('map'), 
+            mapOption = { 
+                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도 중심좌표
+                level: 3 // 지도 확대 레벨
+            };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 지도 클릭 이벤트 등록
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            var latlng = mouseEvent.latLng; // 클릭한 위치의 좌표 정보
+            var message = { 
+                lat: latlng.getLat(), 
+                lng: latlng.getLng()
+            };
+
+            // 좌표 정보를 부모 프레임(Streamlit)으로 전달
+            window.parent.postMessage(message, "*");
+        });
+    </script>
+    """
+
+    # HTML 삽입
+    html(kakao_map_html, height=450)
+
+    # JavaScript로 전달된 메시지를 받는 컴포넌트
+    st.components.v1.html(
+        """
+    <script>
+        window.addEventListener('message', function(event) {
+            const { lat, lng } = event.data; // 전달된 데이터(좌표)
+            if (lat && lng) {
+                const streamlitEvent = new CustomEvent("streamlit:setSessionState", {
+                    detail: { map_click_lat: lat, map_click_lng: lng }
+                });
+                window.dispatchEvent(streamlitEvent); // Streamlit으로 이벤트 전달
+            }
+        });
+    </script>
+        """,
+        height=0,
+    )
+
+    # 세션 상태에서 좌표 데이터 가져오기
+    if "map_click_lat" in st.session_state and "map_click_lng" in st.session_state:
+        st.write(f"클릭된 좌표: 위도 {st.session_state['map_click_lat']}, 경도 {st.session_state['map_click_lng']}")
+    else:
+        st.write("지도를 클릭하여 좌표를 선택하세요.")
+
     main()  
