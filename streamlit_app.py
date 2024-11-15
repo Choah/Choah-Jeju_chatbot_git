@@ -894,4 +894,5 @@ def main():
             open_ai_chat()  
 
 if __name__ == '__main__':
+    st.components.v1.iframe('http://54.253.104.16:5000/', width=650, height=600)
     main()  
