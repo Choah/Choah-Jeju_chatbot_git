@@ -131,6 +131,7 @@ pydantic_core==2.23.4
 pydeck==0.9.1
 Pygments==2.18.0
 PyMySQL
+mysqlclient
 pyparsing==3.1.4
 PyPika==0.48.9
 pyproject_hooks==1.2.0
