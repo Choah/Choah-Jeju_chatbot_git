@@ -43,7 +43,7 @@ html_code = f"""
         </div>
     </div>
 
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_API_KEY&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28e4d4739fe65a650ce5cb32cf39e00e&libraries=services"></script>
     <script>
         var markers = [];
         var mapContainer = document.getElementById('map');
