@@ -891,4 +891,7 @@ def main():
             open_ai_chat()  
 
 if __name__ == '__main__':
+    from app_s import html_code
+    components.html(html_code, height=600, scrolling=True)
+
     main()  
