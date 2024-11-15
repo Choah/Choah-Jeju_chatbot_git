@@ -919,7 +919,7 @@ if __name__ == '__main__':
     );
 
     function searchPlaces() {{
-        var keyword = "{keyword}";
+        var keyword = "성산일출봉";
         if (!keyword.replace(/^\s+|\s+$/g, '')) {{
             alert('키워드를 입력해주세요!');
             return false;
