@@ -45,7 +45,7 @@ def make_transition_matrix(hist_df, poi_df, shinhan_df,path_transition_matrix):
     # Convert to a DataFrame for better readability
     transition_matrix_df = pd.DataFrame(transition_matrix, index=shinhan_ids, columns=shinhan_ids)
     transition_matrix_df.to_csv(path_transition_matrix)
-    return transition_matrix_df₩
+    return transition_matrix_df
 
 
 def context_based_recommendation(start_location, transition_matrix_df, visit_poi_df):
