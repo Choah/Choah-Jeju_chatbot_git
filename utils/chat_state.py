@@ -27,8 +27,6 @@ logger = get_logger()
 vdb_instance = None
 vdb = get_vectordb()
 
-import chromadb
-from langchain_chroma import Chroma
 
 class ChatState:
     def __init__(
