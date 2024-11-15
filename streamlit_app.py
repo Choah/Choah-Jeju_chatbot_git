@@ -896,6 +896,7 @@ if __name__ == '__main__':
 
     # Streamlit 앱 제목
     st.title("Kakao Maps in Streamlit")
+    keyword="성산일출봉"
     # 카카오 맵 HTML 코드
     kakao_map_html = f"""
     <div id="map" style="width:100%;height:400px;"></div>
