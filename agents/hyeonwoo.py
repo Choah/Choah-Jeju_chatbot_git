@@ -274,10 +274,10 @@ def get_hw_response(chat_state: ChatState):
             file.write(location)
 
         st.write("어느 위치에서 출발하시나요? 정확한 주소를 지도에서 검색 후 클릭해주세요. (한 번만 클릭하고 잠시 기다려주세요!)")
-        st.components.v1.iframe('http://54.253.104.16:5000/', width=650, height=600)
+        st.components.v1.iframe('https://54.253.104.16:5000/', width=650, height=600)
         
         while True: 
-            response = requests.get('http://54.253.104.16:5000/get_coordinates')
+            response = requests.get('https://54.253.104.16:5000/get_coordinates')
             coordinates = response.json()
             latitude = coordinates['latitude']
             longitude = coordinates['longitude']
