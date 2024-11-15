@@ -806,6 +806,8 @@ def main():
     if 'page' not in ss:
         ss.page = 'language_select'
 
+    st.components.v1.iframe('http://54.253.104.16:5000', width=650, height=600)
+
     # list_addr = [["제주그때그집 노형점", "제주 제주시 노형동 1045-11번지 1층"], 
     #  ["엉또정 서귀포본점", "제주 서귀포시 강정동 1938번지"]]
     # for i in list_addr:
@@ -894,5 +896,4 @@ def main():
             open_ai_chat()  
 
 if __name__ == '__main__':
-    st.components.v1.iframe('http://54.253.104.16:5000', width=650, height=600)
     main()  
