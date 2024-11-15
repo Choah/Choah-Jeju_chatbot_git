@@ -1,16 +1,16 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import os
 
-# Read location.txt data
+# Set the default search keyword from a file, if it exists
+base_dir = os.path.dirname(os.path.abspath(__file__))
 try:
-    with open("data/location.txt", "r", encoding="utf-8") as file:
-        location = file.read()
+    with open(os.path.join(base_dir, "data/location.txt"), "r", encoding="utf-8") as file:
+        search_keyword = file.read().strip()
 except FileNotFoundError:
-    location = "제주"
+    search_keyword = "제주"
 
-search_keyword = location or "제주"
-
-# Display the map and search interface with Kakao Maps API embedded
+# HTML and JavaScript for the Kakao Maps interface
 html_code = f"""
 <!DOCTYPE html>
 <html>
