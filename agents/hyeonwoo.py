@@ -1,6 +1,6 @@
 
 import pandas as pd
-from streamlit.components.v1 import html
+import google.generativeai as genai
 import os
 import random
 import streamlit as st
@@ -17,15 +17,22 @@ from recommendation.utils import json_format
 # from colorama import Fore, Style
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough
+from langchain.memory import ConversationBufferWindowMemory
 from recommendation.utils import sub_task_detection
 from recommendation.distance_based import distance_based_recommendation, get_coordinates_by_question, coordinates_based_recommendation
 import requests, time
+import subprocess
+from recommendation.sql_based import extract_sql_query, sql_based_recommendation
+from recommendation.prompt import template_sql_prompt
 from recommendation.context_based import context_based_recommendation
-from app_s import html_code
 
 from utils.client import MysqlClient
 # from tamla import load_memory
 from utils.lang_utils import pairwise_chat_history_to_msg_list
+import numpy as np
+from langchain_community.vectorstores import Chroma
+from langchain.schema import Document
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from langchain_community.embeddings.huggingface import HuggingFaceEmbeddings
 from utils.client import get_vectordb
 vdb = get_vectordb()
@@ -266,43 +273,22 @@ def get_hw_response(chat_state: ChatState):
         with open(base_dir+"/data/location.txt", "w", encoding="utf-8") as file:
             file.write(location)
 
-        # st.write("어느 위치에서 출발하시나요? 정확한 주소를 지도에서 검색 후 클릭해주세요. (한 번만 클릭하고 잠시 기다려주세요!)")
-        # # st.components.v1.iframe('http://127.0.0.1:5000', width=650, height=600)
-        # html(html_code, height=600, scrolling=True)
-
-        # while True: 
-        #     response = requests.get('http://127.0.0.1:5000/get_coordinates')
-        #     coordinates = response.json()
-        #     latitude = coordinates['latitude']
-        #     longitude = coordinates['longitude']
+        st.write("어느 위치에서 출발하시나요? 정확한 주소를 지도에서 검색 후 클릭해주세요. (한 번만 클릭하고 잠시 기다려주세요!)")
+        st.components.v1.iframe('http://127.0.0.1:5000', width=650, height=600)
+        
+        while True: 
+            response = requests.get('http://127.0.0.1:5000/get_coordinates')
+            coordinates = response.json()
+            latitude = coordinates['latitude']
+            longitude = coordinates['longitude']
             
-        #     print(latitude)
-        #     print(longitude)
-        #     if latitude is not None and longitude is not None:
-        #         break
-        #     time.sleep(1)
-        # Streamlit 앱
-        st.title("장소 검색 및 좌표 선택")
-        st.write("어느 위치에서 출발하시나요? 정확한 주소를 지도에서 검색 후 클릭해주세요.")
-
-        # HTML 삽입
-        coordinates = st.session_state.get("coordinates", {"latitude": None, "longitude": None})
-
-        # JavaScript에서 데이터를 받을 이벤트 등록
-        html(html_code, height=600, scrolling=True)
-
-        # Streamlit 웹 이벤트로 좌표 수신
-        with st.empty():
-            result = st.experimental_get_query_params()
-            if result:
-                st.session_state["coordinates"] = {
-                    "latitude": result.get("latitude"),
-                    "longitude": result.get("longitude")
-                }
-        st.write("선택된 좌표:")
-        st.write(coordinates)
-
-        rec = coordinates_based_recommendation((result.get("longitude"), result.get("latitude")), df)
+            print(latitude)
+            print(longitude)
+            if latitude is not None and longitude is not None:
+                break
+            time.sleep(1)
+        
+        rec = coordinates_based_recommendation((longitude, latitude), df)
         mct_nm_list = rec["MCT_NM"].tolist()
 
         row = []
