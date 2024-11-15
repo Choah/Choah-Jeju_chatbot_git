@@ -115,7 +115,7 @@ onnxruntime==1.19.2
 opentelemetry-proto==1.27.0
 protobuf==3.20.3
 grpcio-status==1.48.2
-proto-plus==1.22.2
+proto-plus>=1.22.3
 psutil==6.0.0
 ptyprocess==0.7.0
 pure_eval==0.2.3
