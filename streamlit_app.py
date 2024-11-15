@@ -83,8 +83,11 @@ if "chat_state" not in ss:
 
 chat_state: ChatState = ss.chat_state
 
+# from app_s import html_code
+# components.html(html_code, height=600, scrolling=True)
+
 # Define the port and start the Flask server as a subprocess
-FLASK_PORT = 5000
+# FLASK_PORT = 5000
 
 # # Flask 백그라운드 서버 실행
 # def run_flask():
@@ -891,7 +894,4 @@ def main():
             open_ai_chat()  
 
 if __name__ == '__main__':
-    from app_s import html_code
-    components.html(html_code, height=600, scrolling=True)
-
     main()  
