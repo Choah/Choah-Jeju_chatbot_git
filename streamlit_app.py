@@ -36,7 +36,6 @@ from utils.streamlit.helpers import (
 import streamlit.components.v1 as components
 from tamla import get_bot_response
 from components.sql_trend import trend_df
-from app_s import html_code
 import requests
 import subprocess
 import time
@@ -83,10 +82,6 @@ if "chat_state" not in ss:
     is_env_loaded = True  # more info at the end of docdocgo.py
 
 chat_state: ChatState = ss.chat_state
-
-# Display the HTML in Streamlit using an iframe
-# st.title("Map Search Interface")
-components.html(html_code, height=600, scrolling=True)
 
 # Define the port and start the Flask server as a subprocess
 FLASK_PORT = 5000
