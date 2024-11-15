@@ -896,17 +896,152 @@ if __name__ == '__main__':
 
     # Streamlit 앱 제목
     st.title("Kakao Maps in Streamlit")
-    kakao_map_html = """
+    # 카카오 맵 HTML 코드
+    kakao_map_html = f"""
     <div id="map" style="width:100%;height:400px;"></div>
+    <div id="result-list" style="height:200px;overflow-y:scroll;"></div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=28e4d4739fe65a650ce5cb32cf39e00e&libraries=services"></script>
     <script>
-    var mapContainer = document.getElementById('map'),
-        mapOption = { 
-            center: new kakao.maps.LatLng(33.450701, 126.570667),
-            level: 3
-        };
-
+    var markers = [];
+    var mapContainer = document.getElementById('map');
+    var mapOption = {{
+        center: new kakao.maps.LatLng(33.49962, 126.531188),
+        level: 3
+    }};
     var map = new kakao.maps.Map(mapContainer, mapOption);
+    var ps = new kakao.maps.services.Places();
+    var infowindow = new kakao.maps.InfoWindow({{zIndex:1}});
+
+    var bounds = new kakao.maps.LatLngBounds(
+        new kakao.maps.LatLng(33.20084, 126.15684),
+        new kakao.maps.LatLng(33.56034, 126.97832)
+    );
+
+    function searchPlaces() {{
+        var keyword = "{keyword}";
+        if (!keyword.replace(/^\s+|\s+$/g, '')) {{
+            alert('키워드를 입력해주세요!');
+            return false;
+        }}
+        ps.keywordSearch(keyword, placesSearchCB, {{ bounds: bounds }});
+    }}
+
+    function placesSearchCB(data, status, pagination) {{
+        if (status === kakao.maps.services.Status.OK) {{
+            displayPlaces(data);
+        }} else if (status === kakao.maps.services.Status.ZERO_RESULT) {{
+            alert('검색 결과가 존재하지 않습니다.');
+        }} else if (status === kakao.maps.services.Status.ERROR) {{
+            alert('검색 결과 중 오류가 발생했습니다.');
+        }}
+    }}
+
+    function displayPlaces(places) {{
+        var listEl = document.getElementById('result-list');
+        var fragment = document.createDocumentFragment();
+        var bounds = new kakao.maps.LatLngBounds();
+
+        removeAllChildNods(listEl);
+        removeMarker();
+
+        for (var i=0; i<places.length; i++) {{
+            var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x);
+            var marker = addMarker(placePosition, i);
+            var itemEl = getListItem(i, places[i]);
+
+            bounds.extend(placePosition);
+
+            (function(marker, title, lat, lng) {{
+                kakao.maps.event.addListener(marker, 'mouseover', function() {{
+                    displayInfowindow(marker, title);
+                }});
+
+                kakao.maps.event.addListener(marker, 'mouseout', function() {{
+                    infowindow.close();
+                }});
+
+                itemEl.onmouseover = function () {{
+                    displayInfowindow(marker, title);
+                }};
+
+                itemEl.onmouseout = function () {{
+                    infowindow.close();
+                }};
+
+                itemEl.onclick = function() {{
+                    map.setCenter(new kakao.maps.LatLng(lat, lng));
+                }};
+            }})(marker, places[i].place_name, places[i].y, places[i].x);
+
+            fragment.appendChild(itemEl);
+        }}
+
+        listEl.appendChild(fragment);
+        map.setBounds(bounds);
+    }}
+
+    function getListItem(index, place) {{
+        var el = document.createElement('div');
+        var itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                    '<div class="info">' +
+                    '   <h5>' + place.place_name + '</h5>';
+
+        if (place.road_address_name) {{
+            itemStr += '    <span>' + place.road_address_name + '</span>' +
+                    '    <span class="jibun gray">' +  place.address_name  + '</span>';
+        }} else {{
+            itemStr += '    <span>' +  place.address_name  + '</span>'; 
+        }}
+                    
+        itemStr += '  <span class="tel">' + place.phone  + '</span>' +
+                '</div>';           
+
+        el.innerHTML = itemStr;
+        el.className = 'item';
+
+        return el;
+    }}
+
+    function addMarker(position, idx) {{
+        var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png',
+            imageSize = new kakao.maps.Size(36, 37),
+            imgOptions = {{
+                spriteSize : new kakao.maps.Size(36, 691),
+                spriteOrigin : new kakao.maps.Point(0, (idx*46)+10),
+                offset: new kakao.maps.Point(13, 37)
+            }},
+            markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+            marker = new kakao.maps.Marker({{
+                position: position,
+                image: markerImage 
+            }});
+
+        marker.setMap(map);
+        markers.push(marker);
+
+        return marker;
+    }}
+
+    function removeMarker() {{
+        for (var i = 0; i < markers.length; i++) {{
+            markers[i].setMap(null);
+        }}   
+        markers = [];
+    }}
+
+    function displayInfowindow(marker, title) {{
+        var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+        infowindow.setContent(content);
+        infowindow.open(map, marker);
+    }}
+
+    function removeAllChildNods(el) {{   
+        while (el.hasChildNodes()) {{
+            el.removeChild (el.lastChild);
+        }}
+    }}
+
+    searchPlaces();
     </script>
     """
 
