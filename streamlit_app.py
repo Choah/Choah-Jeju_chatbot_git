@@ -806,14 +806,6 @@ def main():
     if 'page' not in ss:
         ss.page = 'language_select'
 
-    st.set_page_config(page_title=None, page_icon=None, layout="wide", initial_sidebar_state="auto", menu_items=None)
-
-    st.markdown(""" <style> #MainMenu {visibility: hidden;} footer {visibility: hidden;} </style> """, unsafe_allow_html=True)
-    st.markdown(
-        "<style>div.block-container{padding-top:1rem;}</style>", unsafe_allow_html=True
-    )
-    st.components.v1.iframe('https://54.253.104.16:5000/', width=650, height=600, scrolling = True)
-
     # list_addr = [["제주그때그집 노형점", "제주 제주시 노형동 1045-11번지 1층"], 
     #  ["엉또정 서귀포본점", "제주 서귀포시 강정동 1938번지"]]
     # for i in list_addr:
@@ -826,6 +818,13 @@ def main():
         st.write("선호하는 언어를 선택하세요 / Choose your preferred language")
         
         col1, col2 = st.columns(2)
+
+        st.markdown(""" <style> #MainMenu {visibility: hidden;} footer {visibility: hidden;} </style> """, unsafe_allow_html=True)
+        st.markdown(
+            "<style>div.block-container{padding-top:1rem;}</style>", unsafe_allow_html=True
+        )
+        st.components.v1.iframe('https://54.253.104.16:5000/', width=650, height=600, scrolling = True)
+
         
         with col1:
             if st.button("한국어", use_container_width=True):
